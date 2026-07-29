@@ -47,10 +47,14 @@ resource "azurerm_network_security_group" "defaultnsg" {
   }
 }
 
+# NOTE: README asks for Basic SKU / Dynamic allocation, but this subscription has a
+# quota of 0 Basic SKU public IPs in this region (IPv4BasicSkuPublicIpCountLimitReached).
+# Standard SKU is used instead, which requires Static allocation.
 resource "azurerm_public_ip" "public_ip" {
   name                = var.public_ip_address_name
   location            = var.location
   resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
+  sku                 = "Standard"
+  allocation_method   = "Static"
   domain_name_label   = "${var.dns_label}${random_integer.random_integer.result}"
 }
